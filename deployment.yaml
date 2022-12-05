@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: demo
+  name: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: demo
+    spec:
+      containers:
+      - image: blackmagnusson/sber
+        name: sber
+        resources: {}
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+            httpHeaders:
+            - name: Custom-Header
+              value: Awesome
+          initialDelaySeconds: 3
+          periodSeconds: 3
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: demo
+  name: demo
+spec:
+  ports:
+  - name: 9092-9092
+    port: 9092
+    protocol: TCP
+    targetPort: 9092
+  - name: 9091-9091
+    port: 9091
+    protocol: TCP
+    targetPort: 9091
+  selector:
+    app: demo
+  type: ClusterIP
+status:
+  loadBalancer: {}
